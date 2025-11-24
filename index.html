@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Descubre el patrimonio cultural del Perú de manera accesible">
+    
+    <title>Cultura Peruana Accesible</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Screen: Login -->
+    <div id="screen-login" class="screen active">
+        <div class="login-container">
+            <!-- Hero Image -->
+            <div class="login-hero">
+                <img src="https://images.unsplash.com/photo-1587595431973-160d0d94add1?w=800&h=600&fit=crop" 
+                     alt="Machu Picchu y paisajes del Perú">
+            </div>
+            
+            <!-- Login Content -->
+            <div class="login-content">
+                <h1 class="login-title" data-translate="discover_peru">Descubre Perú</h1>
+                <p class="login-subtitle" data-translate="explore_heritage">Explora la rica herencia cultural del Perú, desde maravillas antiguas hasta tradiciones vibrantes.</p>
+                
+                <!-- Accessibility Options -->
+                <div class="accessibility-section">
+                    <h2 class="section-label" data-translate="accessibility">Accesibilidad</h2>
+                    <div class="accessibility-options">
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="high-contrast">
+                            <span class="checkbox-label" data-translate="high_contrast">Alto Contraste</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="voice-reader">
+                            <span class="checkbox-label" data-translate="voice_reader">Lector de Voz</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="large-font">
+                            <span class="checkbox-label" data-translate="large_font">Fuente Grande</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Language Options -->
+                <div class="language-section">
+                    <h2 class="section-label" data-translate="language">Idioma</h2>
+                    <div class="language-buttons">
+                        <button class="lang-btn active" data-lang="es">Español</button>
+                        <button class="lang-btn" data-lang="qu">Quechua</button>
+                        <button class="lang-btn" data-lang="ay">Aymara</button>
+                        <button class="lang-btn" data-lang="en">English</button>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <button class="btn btn-primary" id="btn-signin" data-translate="sign_in">Iniciar Sesión</button>
+                <button class="btn btn-secondary" id="btn-signup" data-translate="sign_up">Registrarse</button>
+                <button class="btn btn-text" id="btn-guest" data-translate="explore_guest">Explorar como Invitado</button>
+                
+                <p class="terms-text"><span data-translate="terms_agree">Al continuar, aceptas nuestros</span> <a href="#terms" data-translate="terms_service">Términos de Servicio</a> <span data-translate="and">y</span> <a href="#privacy" data-translate="privacy_policy">Política de Privacidad</a>.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Screen: Registro -->
+    <div id="screen-register" class="screen">
+        <div class="register-container">
+            <!-- Header con botón de volver -->
+            <div class="register-header">
+                <button class="back-btn" id="btn-back-register">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+                <h2 class="register-header-title">Crear Cuenta</h2>
+            </div>
+            
+            <!-- Register Content -->
+            <div class="register-content">
+                <div class="register-welcome">
+                    <h1 class="register-title">¡Bienvenido!</h1>
+                    <p class="register-subtitle">Crea tu cuenta para acceder a todas las funcionalidades</p>
+                </div>
+                
+                <!-- Social Login Buttons -->
+                <div class="social-login-section">
+                    <button class="social-btn google-btn" id="register-google">
+                        <svg width="20" height="20" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        <span>Continuar con Google</span>
+                    </button>
+                    
+                    <button class="social-btn facebook-btn" id="register-facebook">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
+                        <span>Continuar con Facebook</span>
+                    </button>
+                    
+                    <button class="social-btn apple-btn" id="register-apple">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                        </svg>
+                        <span>Continuar con Apple</span>
+                    </button>
+                </div>
+                
+                <div class="divider">
+                    <span>o continúa con email</span>
+                </div>
+                
+                <!-- Email Registration Form -->
+                <form class="register-form" id="email-register-form">
+                    <div class="form-group">
+                        <label for="register-name">Nombre completo</label>
+                        <input type="text" id="register-name" placeholder="Ingresa tu nombre" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-email">Correo electrónico</label>
+                        <input type="email" id="register-email" placeholder="ejemplo@correo.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-password">Contraseña</label>
+                        <input type="password" id="register-password" placeholder="Mínimo 8 caracteres" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-register">Crear Cuenta</button>
+                </form>
+                
+                <p class="register-footer">
+                    ¿Ya tienes cuenta? 
+                    <a href="#" id="link-to-signin">Inicia sesión</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Screen: Home -->
+    <div id="screen-home" class="screen">
+        <div class="main-container">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-top">
+                    <img src="https://ui-avatars.com/api/?name=Joshua&background=C41E3A&color=fff" 
+                         alt="Avatar" class="avatar">
+                    <h1 class="greeting"><span data-translate="hello">Hola</span>, Joshua</h1>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="search-bar">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM18 18l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <input type="search" data-translate="search_placeholder" placeholder="Buscar eventos, museos, patrimonios...">
+                </div>
+                
+                <!-- Filters -->
+                <div class="filters">
+                    <button class="filter-btn">
+                        <span data-translate="filter_type">Tipo</span>
+                        <svg width="12" height="8" viewBox="0 0 12 8" fill="currentColor">
+                            <path d="M1 1l5 5 5-5"/>
+                        </svg>
+                    </button>
+                    <button class="filter-btn">
+                        <span data-translate="filter_region">Región</span>
+                        <svg width="12" height="8" viewBox="0 0 12 8" fill="currentColor">
+                            <path d="M1 1l5 5 5-5"/>
+                        </svg>
+                    </button>
+                    <button class="filter-btn">
+                        <span data-translate="filter_accessibility">Accesibilidad</span>
+                        <svg width="12" height="8" viewBox="0 0 12 8" fill="currentColor">
+                            <path d="M1 1l5 5 5-5"/>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Content -->
+            <main class="content">
+                <!-- Eventos Cercanos -->
+                <section class="section">
+                    <h2 class="section-title" data-translate="nearby_events">Eventos Cercanos</h2>
+                    <div class="cards-grid">
+                        <div class="event-card">
+                            <div class="card-image">
+                                <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&h=250&fit=crop" 
+                                     alt="Festival de Música Andina">
+                            </div>
+                            <div class="card-content">
+                                <h3 class="card-title" data-translate="andean_music_festival">Festival de Música Andina</h3>
+                                <p class="card-description" data-translate="traditional_music_dances">Música tradicional y danzas</p>
+                            </div>
+                        </div>
+                        
+                        <div class="event-card">
+                            <div class="card-image">
+                                <img src="https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=250&fit=crop" 
+                                     alt="Exposición de Arte Prehispánico">
+                            </div>
+                            <div class="card-content">
+                                <h3 class="card-title" data-translate="prehispanic_art_exhibition">Exposición de Arte Prehispánico</h3>
+                                <p class="card-description" data-translate="ceramics_textiles">Cerámica y textiles</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Museos y Patrimonios -->
+                <section class="section">
+                    <h2 class="section-title" data-translate="museums_heritage">Museos y Patrimonios</h2>
+                    <div class="list-items">
+                        <div class="list-item">
+                            <div class="list-item-content">
+                                <h3 class="list-item-title" data-translate="national_archaeology_museum">Museo Nacional de Arqueología</h3>
+                                <p class="list-item-description" data-translate="ancient_artifacts_collection">Colección de artefactos antiguos</p>
+                            </div>
+                            <div class="list-item-image">
+                                <img src="https://images.unsplash.com/photo-1566438480900-0609be27a4be?w=120&h=80&fit=crop" 
+                                     alt="Museo">
+                            </div>
+                        </div>
+                        
+                        <div class="list-item">
+                            <div class="list-item-content">
+                                <h3 class="list-item-title" data-translate="chan_chan_citadel">Ciudadela de Chan Chan</h3>
+                                <p class="list-item-description" data-translate="chimu_culture_ruins">Ruinas de la cultura Chimú</p>
+                            </div>
+                            <div class="list-item-image">
+                                <img src="https://images.unsplash.com/photo-1553603227-2358aabe821e?w=120&h=80&fit=crop" 
+                                     alt="Chan Chan">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Actividades Gratuitas -->
+                <section class="section">
+                    <h2 class="section-title" data-translate="free_activities">Actividades Gratuitas o Accesibles</h2>
+                    <div class="list-items">
+                        <div class="list-item">
+                            <div class="list-item-content">
+                                <h3 class="list-item-title" data-translate="historic_center_tour">Recorrido por el Centro Histórico</h3>
+                                <p class="list-item-description" data-translate="colonial_architecture_plazas">Arquitectura colonial y plazas</p>
+                            </div>
+                            <div class="list-item-image">
+                                <img src="https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=120&h=80&fit=crop" 
+                                     alt="Centro Histórico">
+                            </div>
+                        </div>
+                        
+                        <div class="list-item">
+                            <div class="list-item-content">
+                                <h3 class="list-item-title" data-translate="handicraft_workshops">Talleres de Artesanía</h3>
+                                <p class="list-item-description" data-translate="ceramics_weaving_classes">Clases de cerámica y tejido</p>
+                            </div>
+                            <div class="list-item-image">
+                                <img src="https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=120&h=80&fit=crop" 
+                                     alt="Artesanía">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Estadísticas Personales -->
+                <section class="section">
+                    <h2 class="section-title" data-translate="personal_stats">Estadísticas Personales</h2>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-label" data-translate="events">Eventos</div>
+                            <div class="stat-value">12</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label" data-translate="museums">Museos</div>
+                            <div class="stat-value">5</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label" data-translate="heritage">Patrimonios</div>
+                            <div class="stat-value">8</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary full-width">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M2 4h16M2 10h16M2 16h16"/>
+                        </svg>
+                        <span data-translate="explore_culture">Explorar Cultura</span>
+                    </button>
+                </section>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Screen: Map -->
+    <div id="screen-map" class="screen">
+        <div class="map-modern-container">
+            
+            <!-- Hero Header con gradiente -->
+            <div class="map-hero-header">
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <div class="hero-icon">🗺️</div>
+                    <h1 class="hero-title" data-translate="interactive_map">Mapa Cultural del Perú</h1>
+                    <p class="hero-subtitle" data-translate="cultural_map_subtitle">Descubre lugares emblemáticos y accesibles en todo el país</p>
+                </div>
+            </div>
+            
+            <!-- Region Filters con mejor diseño -->
+            <div class="region-filters-modern">
+                <button class="region-btn active" data-region="all">
+                    <span class="btn-icon">🇵🇪</span>
+                    <span class="btn-text" data-translate="all_regions">Todas</span>
+                </button>
+                <button class="region-btn" data-region="lima">
+                    <span class="btn-icon">🏙️</span>
+                    <span class="btn-text">Lima</span>
+                </button>
+                <button class="region-btn" data-region="cusco">
+                    <span class="btn-icon">🏔️</span>
+                    <span class="btn-text">Cusco</span>
+                </button>
+                <button class="region-btn" data-region="costa">
+                    <span class="btn-icon">🌊</span>
+                    <span class="btn-text" data-translate="north_coast">Costa</span>
+                </button>
+                <button class="region-btn" data-region="sierra">
+                    <span class="btn-icon">⛰️</span>
+                    <span class="btn-text" data-translate="peruvian_highlands">Sierra</span>
+                </button>
+            </div>
+            
+            <!-- Cards Grid Moderno -->
+            <div class="places-grid-modern">
+                
+                <!-- Lima Section -->
+                <div class="region-section-modern" data-region="lima">
+                    <div class="region-header-modern">
+                        <span class="region-icon-large">📍</span>
+                        <div class="region-title-group">
+                            <h2 class="region-title" data-translate="lima_metropolitan">Lima Metropolitana</h2>
+                            <p class="region-desc" data-translate="capital_kings">Capital del Perú, ciudad de reyes</p>
+                        </div>
+                    </div>
+                    
+                    <div class="places-cards-grid">
+                        <!-- Museo Larco -->
+                        <div class="place-card-modern" onclick="openPlaceModal('Museo Larco')">
+                            <div class="place-card-header">
+                                <div class="place-icon-circle">🏺</div>
+                                <span class="place-type-badge museum">Museo</span>
+                            </div>
+                            <div class="place-card-body">
+                                <h3 class="place-title">Museo Larco</h3>
+                                <p class="place-location">📍 Pueblo Libre, Lima</p>
+                                <p class="place-description">Colección completa de arte precolombino con jardines hermosos</p>
+                                <div class="place-features">
+                                    <span class="feature-tag accessible">♿ Totalmente accesible</span>
+                                    <span class="feature-tag">🕐 Todos los días</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Centro Histórico -->
+                        <div class="place-card-modern" onclick="openPlaceModal('Centro Histórico')">
+                            <div class="place-card-header">
+                                <div class="place-icon-circle">🏰</div>
+                                <span class="place-type-badge heritage">Patrimonio</span>
+                            </div>
+                            <div class="place-card-body">
+                                <h3 class="place-title">Centro Histórico</h3>
+                                <p class="place-location">📍 Cercado de Lima</p>
+                                <p class="place-description">Patrimonio Mundial UNESCO con arquitectura colonial impresionante</p>
+                                <div class="place-features">
+                                    <span class="feature-tag">⚠️ Parcial</span>
+                                    <span class="feature-tag">🕐 Abierto 24h</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Huaca Pucllana -->
+                        <div class="place-card-modern" onclick="openPlaceModal('Huaca Pucllana')">
+                            <div class="place-card-header">
+                                <div class="place-icon-circle">⛰️</div>
+                                <span class="place-type-badge heritage">Arqueológico</span>
+                            </div>
+                            <div class="place-card-body">
+                                <h3 class="place-title">Huaca Pucllana</h3>
+                                <p class="place-location">📍 Miraflores, Lima</p>
+                                <p class="place-description">Pirámide ceremonial de la cultura Lima (200-700 d.C.)</p>
+                                <div class="place-features">
+                                    <span class="feature-tag accessible">♿ Senderos adaptados</span>
+                                    <span class="feature-tag">🌙 Visitas nocturnas</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- MALI -->
+                        <div class="place-card-modern" onclick="openPlaceModal('Museo de Arte de Lima (MALI)')">
+                            <div class="place-card-header">
+                                <div class="place-icon-circle">🎨</div>
+                                <span class="place-type-badge museum">Arte</span>
+                            </div>
+                            <div class="place-card-body">
+                                <h3 class="place-title">Museo de Arte de Lima</h3>
+                                <p class="place-location">📍 Paseo Colón, Lima</p>
+                                <p class="place-description">Principal museo de arte del país, época precolombina al presente</p>
+                                <div class="place-features">
+                                    <span class="feature-tag accessible">♿ Totalmente accesible</span>
+                                    <span class="feature-tag">🎟️ Entrada libre dom</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Circuito Mágico -->
+                        <div class="place-card-modern" onclick="openPlaceModal('Circuito Mágico del Agua')">
+                            <div class="place-card-header">
+                                <div class="place-icon-circle">⛲</div>
+                                <span class="place-type-badge activity">Atracción</span>
+                            </div>
+                            <div class="place-card-body">
+                                <h3 class="place-title">Circuito Mágico del Agua</h3>
+                                <p class="place-location">📍 Parque de la Reserva</p>
+                                <p class="place-description">Espectáculo de fuentes cibernéticas reconocido por Guinness</p>
+                                <div class="place-features">
+                                    <span class="feature-tag accessible">♿ Senderos pavimentados</span>
+                                    <span class="feature-tag">✨ Show nocturno</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Cusco Section -->
+                <div class="region-section-modern" data-region="cusco">
+                    <div class="region-header-modern">
+                        <span class="region-icon-large">🏔️</span>
+                        <div class="region-title-group">
+                            <h2 class="region-title" data-translate="cusco_region">Cusco - Ombligo del Mundo</h2>
+                            <p class="region-desc" data-translate="historical_capital_inca">Capital histórica del Imperio Inca</p>
+                        </div>
+                    </div>
+                    
+                    <div class="places-cards-grid">
+                        <!-- Machu Picchu -->
+                        <div class="place-card-modern highlight" onclick="openPlaceModal('Machu Picchu')">
+                            <div class="highlight-badge">⭐ Maravilla del Mundo</div>
+                            <div class="place-card-header">
+                                <div class="place-icon-circle">🏔️</div>
+                                <span class="place-type-badge heritage">Patrimonio</span>
+                            </div>
+                            <div class="place-card-body">
+                                <h3 class="place-title">Machu Picchu</h3>
+                                <p class="place-location">📍 Urubamba, Cusco</p>
+                                <p class="place-description">Ciudadela inca del siglo XV, una de las 7 maravillas del mundo</p>
+                                <div class="place-features">
+                                    <span class="feature-tag">⚠️ Reserva anticipada</span>
+                                    <span class="feature-tag">🎫 Entrada limitada</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Sacsayhuamán -->
+                        <div class="place-card-modern" onclick="openPlaceModal('Sacsayhuamán')">
+                            <div class="place-card-header">
+                                <div class="place-icon-circle">🏛️</div>
+                                <span class="place-type-badge heritage">Fortaleza</span>
+                            </div>
+                            <div class="place-card-body">
+                                <h3 class="place-title">Sacsayhuamán</h3>
+                                <p class="place-location">📍 Cusco</p>
+                                <p class="place-description">Fortaleza con bloques de piedra gigantes, sitio del Inti Raymi</p>
+                                <div class="place-features">
+                                    <span class="feature-tag">⚠️ Caminos empinados</span>
+                                    <span class="feature-tag">🎭 Inti Raymi 24-Jun</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Museo Precolombino -->
+                        <div class="place-card-modern" onclick="openPlaceModal('Museo de Arte Precolombino')">
+                            <div class="place-card-header">
+                                <div class="place-icon-circle">🎭</div>
+                                <span class="place-type-badge museum">Museo</span>
+                            </div>
+                            <div class="place-card-body">
+                                <h3 class="place-title">Museo de Arte Precolombino</h3>
+                                <p class="place-location">📍 Plaza Nazarenas, Cusco</p>
+                                <p class="place-description">450 obras maestras en casona colonial del siglo XVI</p>
+                                <div class="place-features">
+                                    <span class="feature-tag accessible">♿ Accesible</span>
+                                    <span class="feature-tag">🕐 9:00 - 22:00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Costa Section -->
+                <div class="region-section-modern" data-region="costa">
+                    <div class="region-header-modern">
+                        <span class="region-icon-large">🌊</span>
+                        <div class="region-title-group">
+                            <h2 class="region-title" data-translate="north_coast">Costa Norte</h2>
+                            <p class="region-desc" data-translate="beaches_deserts">Playas, desiertos y civilizaciones antiguas</p>
+                        </div>
+                    </div>
+                    
+                    <div class="places-cards-grid">
+                        <!-- Chan Chan -->
+                        <div class="place-card-modern" onclick="openPlaceModal('Chan Chan')">
+                            <div class="place-card-header">
+                                <div class="place-icon-circle">🏜️</div>
+                                <span class="place-type-badge heritage">Patrimonio UNESCO</span>
+                            </div>
+                            <div class="place-card-body">
+                                <h3 class="place-title">Chan Chan</h3>
+                                <p class="place-location">📍 Trujillo, La Libertad</p>
+                                <p class="place-description">La ciudad de barro más grande de América prehispánica</p>
+                                <div class="place-features">
+                                    <span class="feature-tag">⚠️ Parcialmente accesible</span>
+                                    <span class="feature-tag">🏛️ Cultura Chimú</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Huacas del Sol y Luna -->
+                        <div class="place-card-modern" onclick="openPlaceModal('Huacas del Sol y la Luna')">
+                            <div class="place-card-header">
+                                <div class="place-icon-circle">🌊</div>
+                                <span class="place-type-badge heritage">Arqueológico</span>
+                            </div>
+                            <div class="place-card-body">
+                                <h3 class="place-title">Huacas del Sol y la Luna</h3>
+                                <p class="place-location">📍 Trujillo, La Libertad</p>
+                                <p class="place-description">Pirámides de la cultura Moche con murales coloridos</p>
+                                <div class="place-features">
+                                    <span class="feature-tag accessible">♿ Accesible</span>
+                                    <span class="feature-tag">🎨 Murales conservados</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sierra Section -->
+                <div class="region-section-modern" data-region="sierra">
+                    <div class="region-header-modern">
+                        <span class="region-icon-large">⛰️</span>
+                        <div class="region-title-group">
+                            <h2 class="region-title" data-translate="peruvian_highlands">Sierra Peruana</h2>
+                            <p class="region-desc" data-translate="mountains_traditions">Montañas, tradiciones y cultura ancestral</p>
+                        </div>
+                    </div>
+                    
+                    <div class="places-cards-grid">
+                        <!-- Candelaria -->
+                        <div class="place-card-modern" onclick="openPlaceModal('Festividad de la Virgen de la Candelaria')">
+                            <div class="place-card-header">
+                                <div class="place-icon-circle">🎪</div>
+                                <span class="place-type-badge activity">Festividad</span>
+                            </div>
+                            <div class="place-card-body">
+                                <h3 class="place-title">Virgen de la Candelaria</h3>
+                                <p class="place-location">📍 Puno</p>
+                                <p class="place-description">Patrimonio Cultural Inmaterial de la Humanidad</p>
+                                <div class="place-features">
+                                    <span class="feature-tag">🎉 Febrero</span>
+                                    <span class="feature-tag">💃 Danzas típicas</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chavín -->
+                        <div class="place-card-modern" onclick="openPlaceModal('Chavín de Huántar')">
+                            <div class="place-card-header">
+                                <div class="place-icon-circle">🏞️</div>
+                                <span class="place-type-badge heritage">Patrimonio UNESCO</span>
+                            </div>
+                            <div class="place-card-body">
+                                <h3 class="place-title">Chavín de Huántar</h3>
+                                <p class="place-location">📍 Áncash</p>
+                                <p class="place-description">Centro ceremonial de la cultura Chavín (1500-500 a.C.)</p>
+                                <div class="place-features">
+                                    <span class="feature-tag">⚠️ Parcialmente accesible</span>
+                                    <span class="feature-tag">🗿 Lanzón monolítico</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- Screen: Event Detail -->
+    <div id="screen-event-detail" class="screen">
+        <div class="detail-container">
+            <!-- Header -->
+            <header class="detail-header">
+                <button class="back-btn" id="btn-back">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+                <span class="detail-view-label" data-translate="event_view">Vista de Evento</span>
+                <button class="share-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/>
+                    </svg>
+                </button>
+            </header>
+            
+            <!-- Event Image -->
+            <div class="detail-image">
+                <img src="https://images.unsplash.com/photo-1610375461246-83df859d849d?w=800&h=500&fit=crop" 
+                     alt="Festival de la Marinera">
+            </div>
+            
+            <!-- Event Content -->
+            <div class="detail-content">
+                <h1 class="detail-title" data-translate="marinera_festival">Festival de la Marinera</h1>
+                <p class="detail-description" data-translate="marinera_description">
+                    Disfruta de la elegancia y pasión de la Marinera, danza nacional del Perú, en un evento lleno de color, música y tradición.
+                </p>
+                
+                <!-- Info Tags -->
+                <div class="info-tags">
+                    <div class="info-tag">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                        <span data-translate="accessibility_info">Accesibilidad...</span>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="detail-actions">
+                    <button class="btn btn-secondary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
+                        </svg>
+                        <span data-translate="save">Guardar</span>
+                    </button>
+                    <button class="btn btn-secondary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/>
+                        </svg>
+                        <span data-translate="share">Compartir</span>
+                    </button>
+                </div>
+                
+                <button class="btn btn-primary full-width" data-translate="attend">Asistir</button>
+                <button class="btn btn-outline full-width" data-translate="view_map">Ver en mapa</button>
+                
+                <!-- Recommendations -->
+                <section class="recommendations">
+                    <h2 class="section-title" data-translate="might_interest">También te puede interesar...</h2>
+                    <div class="recommendations-grid">
+                        <div class="recommendation-card">
+                            <div class="recommendation-image">
+                                <img src="https://images.unsplash.com/photo-1518391846015-55a9cc003b25?w=300&h=400&fit=crop" 
+                                     alt="Arte Textil Andino">
+                            </div>
+                            <div class="recommendation-content">
+                                <h3 class="recommendation-title" data-translate="andean_textile_art">Arte Textil Andino</h3>
+                                <p class="recommendation-description" data-translate="discover_richness">Descubre la riqueza de los tejidos andinos</p>
+                            </div>
+                        </div>
+                        
+                        <div class="recommendation-card">
+                            <div class="recommendation-image">
+                                <img src="https://images.unsplash.com/photo-1587595431973-160d0d94add1?w=300&h=400&fit=crop" 
+                                     alt="Maravillas de Machu Picchu">
+                            </div>
+                            <div class="recommendation-content">
+                                <h3 class="recommendation-title" data-translate="machu_picchu_wonders">Maravillas de Machu Picchu</h3>
+                                <p class="recommendation-description" data-translate="explore_citadel">Explora la ciudadela inca de Machu Picchu...</p>
+                            </div>
+                        </div>
+                        
+                        <div class="recommendation-card">
+                            <div class="recommendation-image">
+                                <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=300&h=400&fit=crop" 
+                                     alt="Cerámica Peruana">
+                            </div>
+                            <div class="recommendation-content">
+                                <h3 class="recommendation-title">Cerámica Pre...</h3>
+                                <p class="recommendation-description">Piezas únicas de cer...</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Screen: Mi Cultura (Profile) -->
+    <div id="screen-culture" class="screen">
+        <div class="profile-container">
+            <!-- Header -->
+            <header class="profile-header">
+                <button class="back-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+                <h1 class="profile-title" data-translate="my_culture">Mi Cultura</h1>
+            </header>
+            
+            <!-- Content -->
+            <div class="profile-content">
+                <!-- Logros -->
+                <section class="section">
+                    <h2 class="section-title" data-translate="my_achievements">Mis Logros</h2>
+                    <div class="achievements-grid">
+                        <div class="achievement-box">
+                            <div class="achievement-label" data-translate="visited_museums">Museos Visitados</div>
+                            <div class="achievement-value">3</div>
+                        </div>
+                        <div class="achievement-box">
+                            <div class="achievement-label" data-translate="participated_workshops">Talleres Participados</div>
+                            <div class="achievement-value">2</div>
+                        </div>
+                        <div class="achievement-box full-width">
+                            <div class="achievement-label" data-translate="explored_regions">Regiones Exploradas</div>
+                            <div class="achievement-value">4</div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Progreso Cultural -->
+                <section class="section">
+                    <h2 class="section-title" data-translate="cultural_progress">Progreso Cultural</h2>
+                    <div class="progress-section">
+                        <div class="progress-label" data-translate="general_progress">Progreso General</div>
+                        <div class="progress-value">75%</div>
+                        <div class="progress-sublabel" data-translate="total">Total</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="culture-badge">Cultura</div>
+                </section>
+                
+                <!-- Preferencias -->
+                <section class="section">
+                    <h2 class="section-title" data-translate="preferences">Preferencias</h2>
+                    <div class="preferences-list">
+                        <div class="preference-item">
+                            <div class="preference-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M12 2v20M2 12h20"/>
+                                </svg>
+                            </div>
+                            <div class="preference-content">
+                                <div class="preference-label" data-translate="preferred_language">Mi idioma Preferido</div>
+                                <div class="preference-value" data-translate="spanish">Español</div>
+                            </div>
+                        </div>
+                        
+                        <div class="preference-item">
+                            <div class="preference-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="12" cy="12" r="3"/>
+                                    <path d="M12 1v6m0 6v6M1 12h6m6 0h6"/>
+                                </svg>
+                            </div>
+                            <div class="preference-content">
+                                <div class="preference-label" data-translate="accessible_mode">Modo Accesible</div>
+                                <div class="preference-value" data-translate="disabled">Desactivado</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Screen: Comunidad -->
+    <div id="screen-community" class="screen">
+        <div class="community-container">
+            <!-- Header -->
+            <header class="community-header">
+                <div class="community-header-content">
+                    <h1 class="community-title" data-translate="community">👥 Comunidad</h1>
+                    <p class="community-subtitle">Comparte y descubre experiencias culturales</p>
+                </div>
+            </header>
+            
+            <!-- Filters -->
+            <div class="community-filters">
+                <button class="filter-btn active">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 2v20M2 12h20"/>
+                    </svg>
+                    <span data-translate="region">Todas las Regiones</span>
+                </button>
+                <button class="filter-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                    <span data-translate="theme">Todas las Temáticas</span>
+                </button>
+            </div>
+            
+            <!-- Content -->
+            <div class="community-content">
+                <h2 class="section-title" data-translate="featured_posts">Publicaciones destacadas</h2>
+                
+                <!-- Post 1 -->
+                <article class="post-card">
+                    <div class="post-image">
+                        <img src="https://images.unsplash.com/photo-1587595431973-160d0d94add1?w=800&h=500&fit=crop" 
+                             alt="Machu Picchu">
+                    </div>
+                    <div class="post-content">
+                        <h3 class="post-title" data-translate="exploring_machu_picchu">Explorando la magia de Machu Picchu</h3>
+                        <p class="post-description" data-translate="machu_picchu_description">
+                            Descubre la ciudadela inca a través de mis ojos. Un viaje inolvidable lleno de historia y paisajes impresionantes.
+                        </p>
+                        <div class="post-meta" data-translate="days_ago_2">Hace 2 días</div>
+                    </div>
+                </article>
+                
+                <!-- Post 2 -->
+                <article class="post-card">
+                    <div class="post-image">
+                        <img src="https://images.unsplash.com/photo-1583221015721-200be2a0f5fa?w=800&h=500&fit=crop" 
+                             alt="Danzas ancestrales">
+                    </div>
+                    <div class="post-content">
+                        <h3 class="post-title" data-translate="ancestral_dances">Danzas ancestrales de la sierra</h3>
+                        <p class="post-description" data-translate="dances_description">
+                            Presencié una presentación de danzas tradicionales en un pueblo andino. La energía y el colorido de los trajes fueron fascinantes.
+                        </p>
+                        <div class="post-meta" data-translate="week_ago">Hace 1 semana</div>
+                    </div>
+                </article>
+                
+                <!-- Post 3 -->
+                <article class="post-card">
+                    <div class="post-image">
+                        <img src="https://images.unsplash.com/photo-1626200419199-391ae4be7a41?w=800&h=500&fit=crop" 
+                             alt="Ceviche">
+                    </div>
+                    <div class="post-content">
+                        <h3 class="post-title" data-translate="northern_flavors">Sabores del norte: Ceviche y más</h3>
+                        <p class="post-description" data-translate="ceviche_description">
+                            Probé el mejor ceviche de mi vida en un restaurante local. La frescura de los ingredientes y la combinación de sabores fueron excepcionales.
+                        </p>
+                        <div class="post-meta" data-translate="weeks_ago_3">Hace 3 semanas</div>
+                    </div>
+                </article>
+            </div>
+            
+            <!-- Floating Action Button -->
+            <button class="fab">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M12 5v14M5 12h14"/>
+                </svg>
+                <span data-translate="create_post">Crear publicación</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Bottom Navigation - Universal -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" data-screen="home">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+            </svg>
+            <span data-translate="home">Inicio</span>
+        </button>
+        <button class="nav-item" data-screen="map">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/>
+            </svg>
+            <span data-translate="map">Mapa</span>
+        </button>
+        <button class="nav-item" data-screen="culture">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span data-translate="my_culture_nav">Mi Cultura</span>
+        </button>
+        <button class="nav-item" data-screen="community">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+            </svg>
+            <span data-translate="community_nav">Comunidad</span>
+        </button>
+    </nav>
+    
+    <!-- Modal Popup para Información del Lugar -->
+    <div id="place-modal" class="place-modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            
+            <div class="modal-header">
+                <div class="modal-icon" id="modal-icon">🏛️</div>
+                <h2 class="modal-title" id="modal-title">Museo Nacional de Arqueología</h2>
+            </div>
+            
+            <div class="modal-body">
+                <div class="modal-image" id="modal-image">
+                    <img src="https://images.unsplash.com/photo-1566127992631-137a642a90f4?w=600&h=400&fit=crop" alt="Museo">
+                </div>
+                
+                <p class="modal-description" id="modal-description">
+                    El museo más antiguo y grande del Perú, con colecciones que abarcan desde la prehistoria hasta la época colonial. Destacan las salas de cerámica, textiles y metalurgia.
+                </p>
+                
+                <div class="modal-info-section">
+                    <h3 class="info-section-title">Información</h3>
+                    
+                    <div class="info-item">
+                        <div class="info-label">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 6v6l4 2"/>
+                            </svg>
+                            <span>Horario</span>
+                        </div>
+                        <div class="info-value" id="modal-schedule">
+                            Martes a Sábado:<br>9:00 - 17:00
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                            <span>Ubicación</span>
+                        </div>
+                        <div class="info-value" id="modal-location">San Borja, Lima</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="8.5" cy="7" r="4"/>
+                                <line x1="20" y1="8" x2="20" y2="14"/>
+                                <line x1="23" y1="11" x2="17" y2="11"/>
+                            </svg>
+                            <span>Accesibilidad</span>
+                        </div>
+                        <div class="info-value" id="modal-accessibility">
+                            Rampas, ascensores, guías en lenguaje de señas
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                            </svg>
+                            <span>Teléfono</span>
+                        </div>
+                        <div class="info-value" id="modal-phone">+51 1463 5070</div>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="modal-btn modal-btn-primary" id="modal-directions">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        Ver en Mapa
+                    </button>
+                    <button class="modal-btn modal-btn-secondary" id="modal-share">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="18" cy="5" r="3"/>
+                            <circle cx="6" cy="12" r="3"/>
+                            <circle cx="18" cy="19" r="3"/>
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                        </svg>
+                        Compartir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+    <script src="script.js"></script>
+</body>
+</html>

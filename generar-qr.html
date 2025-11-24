@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de QR - Cultura Peruana</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        #qrcode {
+            margin: 30px auto;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            display: inline-block;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .info-box h3 {
+            color: #1976D2;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .info-box p {
+            color: #555;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .info-box ol {
+            margin-left: 20px;
+            margin-top: 10px;
+            color: #555;
+            font-size: 13px;
+        }
+
+        .info-box li {
+            margin-bottom: 8px;
+        }
+
+        .info-box code {
+            background: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #d63384;
+            font-family: monospace;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            margin-top: 15px;
+        }
+
+        .url-display {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 13px;
+            color: #495057;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Generador de QR</h1>
+        <p class="subtitle">Cultura Peruana Accesible</p>
+
+        <div class="input-group">
+            <label for="url">🌐 URL de tu aplicación:</label>
+            <input type="text" id="url" placeholder="Ej: http://localhost:8000 o https://tu-url.com" value="http://localhost:8000">
+        </div>
+
+        <button onclick="generarQR()">🎯 Generar Código QR</button>
+
+        <div id="qrcode"></div>
+        
+        <div id="urlDisplay" class="url-display hidden"></div>
+
+        <button id="downloadBtn" class="download-btn hidden" onclick="descargarQR()">
+            📥 Descargar QR
+        </button>
+
+        <div class="info-box">
+            <h3>📝 Instrucciones para hacer tu web pública:</h3>
+            <ol>
+                <li>Abre PowerShell en la carpeta del proyecto</li>
+                <li>Ejecuta: <code>python -m http.server 8000</code></li>
+                <li>Instala ngrok desde: <code>https://ngrok.com</code></li>
+                <li>Ejecuta: <code>ngrok http 8000</code></li>
+                <li>Copia la URL pública que te da ngrok</li>
+                <li>Pégala arriba y genera el QR</li>
+            </ol>
+            <p><strong>💡 Alternativa rápida:</strong> Usa <code>http://localhost:8000</code> si solo quieres probarlo localmente</p>
+        </div>
+    </div>
+
+    <!-- QRCode.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <script>
+        let qrcode = null;
+
+        function generarQR() {
+            const url = document.getElementById('url').value.trim();
+            
+            if (!url) {
+                alert('Por favor ingresa una URL válida');
+                return;
+            }
+
+            // Limpiar QR anterior si existe
+            document.getElementById('qrcode').innerHTML = '';
+            
+            // Generar nuevo QR
+            qrcode = new QRCode(document.getElementById("qrcode"), {
+                text: url,
+                width: 256,
+                height: 256,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            // Mostrar URL
+            document.getElementById('urlDisplay').textContent = '🔗 ' + url;
+            document.getElementById('urlDisplay').classList.remove('hidden');
+            
+            // Mostrar botón de descarga
+            document.getElementById('downloadBtn').classList.remove('hidden');
+
+            console.log('✅ QR generado para:', url);
+        }
+
+        function descargarQR() {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (canvas) {
+                const url = canvas.toDataURL("image/png");
+                const link = document.createElement('a');
+                link.download = 'qr-cultura-peruana.png';
+                link.href = url;
+                link.click();
+                console.log('📥 QR descargado');
+            } else {
+                alert('Primero genera un código QR');
+            }
+        }
+
+        // Generar QR automáticamente al cargar
+        window.addEventListener('DOMContentLoaded', function() {
+            generarQR();
+        });
+    </script>
+</body>
+</html>
