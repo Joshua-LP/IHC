@@ -62,6 +62,9 @@
     --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
     --shadow-color: 0 4px 20px rgba(255, 149, 0, 0.3);
     --shadow-glow: 0 0 20px rgba(255, 149, 0, 0.4);
+    
+    /* Fuente grande */
+    --font-scale: 1;
 }
 
 html {
@@ -78,6 +81,34 @@ body {
     overflow-x: hidden;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+}
+
+/* ========================================
+   FUENTE GRANDE - ACCESIBILIDAD
+======================================== */
+body.large-font {
+    --font-scale: 1.25;
+}
+
+body.large-font h1,
+body.large-font h2,
+body.large-font h3,
+body.large-font h4,
+body.large-font h5,
+body.large-font h6 {
+    font-size: calc(1em * var(--font-scale));
+}
+
+body.large-font p,
+body.large-font span,
+body.large-font a,
+body.large-font button,
+body.large-font input,
+body.large-font textarea,
+body.large-font select,
+body.large-font label,
+body.large-font li {
+    font-size: calc(1em * var(--font-scale)) !important;
 }
 
 /* ========================================
@@ -4881,3 +4912,184 @@ body.voice-reader-enabled .post-title:hover {
     }
 }
 
+/* ========================================
+   ESTILOS PARA EL LECTOR DE VOZ
+======================================== */
+
+/* Estilos para cuando el lector de voz está activo */
+body.voice-reader-enabled {
+    --voice-indicator: #10B981;
+}
+
+body.voice-reader-enabled h1,
+body.voice-reader-enabled h2,
+body.voice-reader-enabled h3,
+body.voice-reader-enabled h4,
+body.voice-reader-enabled .section-title,
+body.voice-reader-enabled .hero-title {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+body.voice-reader-enabled h1:hover,
+body.voice-reader-enabled h2:hover,
+body.voice-reader-enabled h3:hover,
+body.voice-reader-enabled h4:hover,
+body.voice-reader-enabled .section-title:hover,
+body.voice-reader-enabled .hero-title:hover {
+    color: var(--voice-indicator);
+    cursor: help;
+    text-decoration: underline wavy var(--voice-indicator);
+    text-underline-offset: 4px;
+}
+
+body.voice-reader-enabled h1:hover::before,
+body.voice-reader-enabled h2:hover::before,
+body.voice-reader-enabled h3:hover::before {
+    content: '🔊';
+    position: absolute;
+    left: -30px;
+    font-size: 16px;
+    animation: voicePulse 1.5s infinite;
+}
+
+@keyframes voicePulse {
+    0%, 100% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% { 
+        transform: scale(1.2);
+        opacity: 0.7;
+    }
+}
+
+body.voice-reader-enabled .museum-card:hover,
+body.voice-reader-enabled .event-item:hover,
+body.voice-reader-enabled .thumbnail-item:hover {
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.25) !important;
+    border: 2px solid var(--voice-indicator);
+    transform: translateY(-4px) scale(1.02) !important;
+}
+
+body.voice-reader-enabled button:hover,
+body.voice-reader-enabled .btn:hover,
+body.voice-reader-enabled .filter-btn:hover {
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3) !important;
+    border-color: var(--voice-indicator) !important;
+}
+
+/* Indicador de que el lector de voz está activo */
+body.voice-reader-enabled::before {
+    content: '🎤 Lector de voz activo';
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    background: linear-gradient(135deg, #10B981, #059669);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 700;
+    z-index: 10000;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+    animation: slideInRight 0.5s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Indicador cuando está hablando */
+body.is-speaking::after {
+    content: '🔊 Reproduciendo...';
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #F59E0B, #EF4444);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 700;
+    z-index: 10001;
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+    animation: speakingPulse 1s infinite;
+}
+
+@keyframes speakingPulse {
+    0%, 100% { 
+        transform: translateX(-50%) scale(1);
+        box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+    }
+    50% { 
+        transform: translateX(-50%) scale(1.05);
+        box-shadow: 0 8px 24px rgba(239, 68, 68, 0.7);
+    }
+}
+
+/* Indicador flotante de ayuda */
+.voice-help-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(16, 185, 129, 0.95);
+    color: white;
+    padding: 12px 18px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 9999;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+    animation: fadeIn 0.5s ease;
+    max-width: 250px;
+}
+
+.voice-help-indicator p {
+    margin: 4px 0;
+    font-size: 11px;
+    opacity: 0.9;
+}
+
+.voice-help-indicator strong {
+    font-weight: 700;
+}
+
+/* Estilos de accesibilidad mejorados */
+body.voice-reader-enabled *:focus-visible {
+    outline: 3px solid var(--voice-indicator) !important;
+    outline-offset: 2px;
+}
+
+/* Botón de voz activo */
+#voiceBtn.active,
+#toggleVoiceBtn.active {
+    background: linear-gradient(135deg, #10B981, #059669) !important;
+    color: white !important;
+    border-color: #10B981 !important;
+}
+
+#voiceBtn.active i,
+#toggleVoiceBtn.active i {
+    animation: voicePulse 1.5s infinite;
+}
+
+/* Animaciones adicionales */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

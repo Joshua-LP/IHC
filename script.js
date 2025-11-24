@@ -117,7 +117,16 @@ const translations = {
         home: "Inicio",
         map: "Mapa",
         my_culture_nav: "Mi Cultura",
-        community_nav: "Comunidad"
+        community_nav: "Comunidad",
+        
+        // Notificaciones
+        msg_voice_activated: "Lector de voz activado",
+        msg_voice_deactivated: "Lector de voz desactivado",
+        msg_contrast_activated: "Alto contraste activado",
+        msg_contrast_deactivated: "Alto contraste desactivado",
+        msg_font_increased: "Tamaño de fuente aumentado",
+        msg_font_decreased: "Tamaño de fuente reducido",
+        msg_font_reset: "Tamaño de fuente restablecido"
     },
     
     en: {
@@ -234,7 +243,16 @@ const translations = {
         home: "Home",
         map: "Map",
         my_culture_nav: "My Culture",
-        community_nav: "Community"
+        community_nav: "Community",
+        
+        // Notifications
+        msg_voice_activated: "Voice reader activated",
+        msg_voice_deactivated: "Voice reader deactivated",
+        msg_contrast_activated: "High contrast activated",
+        msg_contrast_deactivated: "High contrast deactivated",
+        msg_font_increased: "Font size increased",
+        msg_font_decreased: "Font size decreased",
+        msg_font_reset: "Font size reset"
     },
     
     qu: {
@@ -468,7 +486,16 @@ const translations = {
         home: "Qalltawi",
         map: "Mapa",
         my_culture_nav: "Nayan Jakawi",
-        community_nav: "Ayllu"
+        community_nav: "Ayllu",
+        
+        // Yatiyawinaka (Notificaciones)
+        msg_voice_activated: "Aru Ullawi ch'amanchata",
+        msg_voice_deactivated: "Aru Ullawi jani ch'amanchata",
+        msg_contrast_activated: "Jach'a Sami ch'amanchata",
+        msg_contrast_deactivated: "Jach'a Sami jani ch'amanchata",
+        msg_font_increased: "Qillqawi jilata",
+        msg_font_decreased: "Qillqawi jisk'achata",
+        msg_font_reset: "Qillqawi mayamp lurañataki"
     }
 };
 
@@ -2608,3 +2635,532 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// ========================================
+// LECTOR DE VOZ (VOICE READER)
+// ========================================
+
+let isVoiceReaderActive = false;
+let currentVoice = null;
+let isSpeaking = false;
+let voiceReaderEnabled = false;
+
+// Inicializar voces
+function initializeVoices() {
+    return new Promise((resolve) => {
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length > 0) {
+            resolve(voices);
+        } else {
+            window.speechSynthesis.onvoiceschanged = () => {
+                resolve(window.speechSynthesis.getVoices());
+            };
+        }
+    });
+}
+
+// Función para hablar texto
+function speakText(text, options = {}) {
+    if (!window.speechSynthesis || !isVoiceReaderActive) return;
+    
+    // Limpiar cualquier speech anterior
+    window.speechSynthesis.cancel();
+    isSpeaking = false;
+    
+    // Validar texto
+    if (!text || text.trim().length === 0) return;
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Configurar voz según idioma actual
+    const voices = window.speechSynthesis.getVoices();
+    let voiceLang = 'es-ES';
+    
+    switch(currentLanguage) {
+        case 'en': voiceLang = 'en-US'; break;
+        case 'fr': voiceLang = 'fr-FR'; break;
+        default: voiceLang = 'es-ES';
+    }
+    
+    const selectedVoice = voices.find(voice => 
+        voice.lang.startsWith(voiceLang.split('-')[0]) || 
+        voice.lang === voiceLang
+    );
+    
+    if (selectedVoice) {
+        utterance.voice = selectedVoice;
+        utterance.lang = selectedVoice.lang;
+    } else {
+        utterance.lang = voiceLang;
+    }
+    
+    // Configurar propiedades de la voz
+    utterance.rate = options.rate || 1.0;
+    utterance.pitch = options.pitch || 1.0;
+    utterance.volume = options.volume || 1.0;
+    
+    // Eventos de la voz
+    utterance.onstart = () => {
+        isSpeaking = true;
+        document.body.classList.add('is-speaking');
+    };
+    
+    utterance.onend = () => {
+        isSpeaking = false;
+        document.body.classList.remove('is-speaking');
+    };
+    
+    utterance.onerror = (event) => {
+        isSpeaking = false;
+        document.body.classList.remove('is-speaking');
+        console.error('❌ Error en la lectura:', event.error);
+    };
+    
+    // Hablar con delay para evitar problemas
+    setTimeout(() => {
+        window.speechSynthesis.speak(utterance);
+    }, 50);
+}
+
+// Función para obtener texto limpio de un elemento
+function getCleanText(element) {
+    if (!element) return '';
+    
+    // Clonar el elemento para no afectar el DOM original
+    const clone = element.cloneNode(true);
+    
+    // Eliminar elementos que no queremos leer
+    const unwantedElements = clone.querySelectorAll('script, style, svg, iframe');
+    unwantedElements.forEach(el => el.remove());
+    
+    // Obtener texto y limpiarlo
+    let text = clone.textContent || clone.innerText || '';
+    
+    // Limpiar espacios excesivos y caracteres especiales
+    text = text.replace(/\s+/g, ' ').trim();
+    text = text.replace(/[^\w\s\.\,\;\:\!\?\-\(\)]/g, '');
+    
+    return text;
+}
+
+// Función para activar el lector de voz
+async function enableVoiceReader() {
+    isVoiceReaderActive = true;
+    document.body.classList.add('voice-reader-enabled');
+    
+    // Inicializar voces
+    try {
+        const voices = await initializeVoices();
+        console.log('🎙️ Voces disponibles:', voices.length);
+    } catch (error) {
+        console.error('Error al cargar voces:', error);
+    }
+    
+    // Agregar eventos de lectura
+    addVoiceReaderEvents();
+    
+    // Crear indicador de ayuda flotante
+    createVoiceHelpIndicator();
+    
+    // Mensaje de bienvenida
+    setTimeout(() => {
+        speakText('Lector de voz activado. Pasa el cursor sobre los elementos para escuchar su contenido.');
+    }, 800);
+    
+    // Agregar listener para teclas de acceso rápido
+    document.addEventListener('keydown', handleVoiceReaderKeyboard);
+    
+    console.log('🎤 Lector de voz habilitado');
+}
+
+// Función para desactivar el lector de voz
+function disableVoiceReader() {
+    isVoiceReaderActive = false;
+    document.body.classList.remove('voice-reader-enabled');
+    
+    // Detener cualquier lectura en curso
+    if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+    }
+    
+    // Remover eventos de lectura automática
+    removeVoiceReaderEvents();
+    
+    // Remover listener de teclado
+    document.removeEventListener('keydown', handleVoiceReaderKeyboard);
+    
+    // Remover indicador de ayuda
+    removeVoiceHelpIndicator();
+    
+    console.log('🔇 Lector de voz deshabilitado');
+}
+
+// Función para agregar eventos de lectura
+function addVoiceReaderEvents() {
+    // Leer títulos al hacer hover
+    const headings = document.querySelectorAll('h1, h2, h3, h4, .section-title, .hero-title, .museum-title');
+    headings.forEach(heading => {
+        heading.addEventListener('mouseenter', handleHeadingHover);
+        heading.addEventListener('focus', handleHeadingHover);
+        heading.style.cursor = 'help';
+        heading.setAttribute('tabindex', '0');
+    });
+    
+    // Leer contenido de tarjetas al hacer clic
+    const cards = document.querySelectorAll('.museum-card, .event-item, .thumbnail-item');
+    cards.forEach(card => {
+        card.addEventListener('click', handleCardClick);
+        card.addEventListener('focus', handleCardClick);
+        card.setAttribute('tabindex', '0');
+    });
+    
+    // Leer botones al hacer hover
+    const buttons = document.querySelectorAll('button, .btn, .nav-link, .filter-btn');
+    buttons.forEach(button => {
+        button.addEventListener('mouseenter', handleButtonHover);
+        button.addEventListener('focus', handleButtonHover);
+    });
+    
+    // Leer inputs al hacer focus
+    const inputs = document.querySelectorAll('input, textarea, select');
+    inputs.forEach(input => {
+        input.addEventListener('focus', handleInputFocus);
+    });
+    
+    console.log('🎯 Eventos de lectura agregados');
+}
+
+// Función para remover eventos de lectura
+function removeVoiceReaderEvents() {
+    const headings = document.querySelectorAll('h1, h2, h3, h4, .section-title, .hero-title, .museum-title');
+    headings.forEach(heading => {
+        heading.removeEventListener('mouseenter', handleHeadingHover);
+        heading.removeEventListener('focus', handleHeadingHover);
+        heading.style.cursor = '';
+        heading.removeAttribute('tabindex');
+    });
+    
+    const cards = document.querySelectorAll('.museum-card, .event-item, .thumbnail-item');
+    cards.forEach(card => {
+        card.removeEventListener('click', handleCardClick);
+        card.removeEventListener('focus', handleCardClick);
+        card.removeAttribute('tabindex');
+    });
+    
+    const buttons = document.querySelectorAll('button, .btn, .nav-link, .filter-btn');
+    buttons.forEach(button => {
+        button.removeEventListener('mouseenter', handleButtonHover);
+        button.removeEventListener('focus', handleButtonHover);
+    });
+    
+    const inputs = document.querySelectorAll('input, textarea, select');
+    inputs.forEach(input => {
+        input.removeEventListener('focus', handleInputFocus);
+    });
+}
+
+// Handlers de eventos
+function handleHeadingHover(event) {
+    if (!isVoiceReaderActive || isSpeaking) return;
+    const text = getCleanText(event.target);
+    if (text.length > 0 && text.length < 300) {
+        speakText(text);
+    }
+}
+
+function handleCardClick(event) {
+    if (!isVoiceReaderActive) return;
+    
+    const title = event.currentTarget.querySelector('h3, h4, .museum-title, .event-title')?.textContent || '';
+    const description = event.currentTarget.querySelector('.museum-description, .event-description')?.textContent || '';
+    const location = event.currentTarget.querySelector('.museum-location, .event-location')?.textContent || '';
+    
+    let text = '';
+    if (title) text += title + '. ';
+    if (description) text += description + '. ';
+    if (location) text += location + '.';
+    
+    if (text.trim()) {
+        speakText(text.trim());
+    }
+}
+
+function handleButtonHover(event) {
+    if (!isVoiceReaderActive || isSpeaking) return;
+    const text = getCleanText(event.target);
+    if (text.length > 0 && text.length < 100) {
+        speakText(text);
+    }
+}
+
+function handleInputFocus(event) {
+    if (!isVoiceReaderActive || isSpeaking) return;
+    
+    const input = event.target;
+    const label = input.getAttribute('placeholder') || 
+                  input.getAttribute('aria-label') || 
+                  input.name || 
+                  'Campo de entrada';
+    
+    const type = input.type;
+    let announcement = '';
+    
+    if (type === 'text' || type === 'email' || type === 'password' || type === 'search') {
+        announcement = `${label}. Campo de texto`;
+    } else if (type === 'checkbox') {
+        announcement = `${label}. Casilla de verificación ${input.checked ? 'marcada' : 'desmarcada'}`;
+    } else if (input.tagName === 'SELECT') {
+        announcement = `${label}. Lista desplegable`;
+    } else if (input.tagName === 'TEXTAREA') {
+        announcement = `${label}. Área de texto`;
+    } else {
+        announcement = label;
+    }
+    
+    speakText(announcement);
+}
+
+// Handler para teclado
+function handleVoiceReaderKeyboard(event) {
+    if (!isVoiceReaderActive) return;
+    
+    // Tecla R: Leer toda la pantalla actual
+    if (event.key === 'r' || event.key === 'R') {
+        event.preventDefault();
+        readCurrentScreen();
+    }
+    
+    // Tecla S: Detener lectura
+    if (event.key === 's' || event.key === 'S') {
+        event.preventDefault();
+        stopReading();
+    }
+    
+    // Tecla Escape: Detener lectura
+    if (event.key === 'Escape') {
+        stopReading();
+    }
+}
+
+// Función para leer la pantalla actual
+function readCurrentScreen() {
+    // Obtener el título principal visible
+    const mainTitle = document.querySelector('.hero-title, .section-title:first-of-type, h1');
+    const mainText = mainTitle ? getCleanText(mainTitle) : '';
+    
+    // Obtener descripción
+    const description = document.querySelector('.hero-subtitle, .section-subtitle, p');
+    const descText = description ? getCleanText(description) : '';
+    
+    // Construir el texto completo
+    let fullText = '';
+    if (mainText) fullText += mainText + '. ';
+    if (descText) fullText += descText + '. ';
+    
+    if (fullText) {
+        speakText(fullText);
+    }
+}
+
+// Función para detener la lectura
+function stopReading() {
+    if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+        isSpeaking = false;
+        document.body.classList.remove('is-speaking');
+        console.log('⏹️ Lectura detenida');
+    }
+}
+
+// Función para crear indicador de ayuda flotante
+function createVoiceHelpIndicator() {
+    if (document.querySelector('.voice-help-indicator')) {
+        return;
+    }
+    
+    const indicator = document.createElement('div');
+    indicator.className = 'voice-help-indicator';
+    indicator.innerHTML = `
+        <strong>💡 Ayuda del Lector</strong>
+        <p><strong>R</strong>: Leer pantalla completa</p>
+        <p><strong>S</strong> o <strong>Esc</strong>: Detener lectura</p>
+        <p>Pasa el cursor sobre elementos para escucharlos</p>
+    `;
+    
+    document.body.appendChild(indicator);
+    
+    // Auto-ocultar después de 10 segundos
+    setTimeout(() => {
+        if (indicator && indicator.parentNode) {
+            indicator.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            indicator.style.opacity = '0';
+            indicator.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                if (indicator.parentNode) {
+                    indicator.remove();
+                }
+            }, 500);
+        }
+    }, 10000);
+}
+
+// Función para remover indicador de ayuda
+function removeVoiceHelpIndicator() {
+    const indicator = document.querySelector('.voice-help-indicator');
+    if (indicator) {
+        indicator.remove();
+    }
+}
+
+// Conectar el botón de voz con la funcionalidad
+const voiceBtn = document.getElementById('voiceBtn');
+const toggleVoiceBtn = document.getElementById('toggleVoiceBtn');
+
+if (voiceBtn) {
+    voiceBtn.addEventListener('click', function() {
+        this.classList.toggle('active');
+        if (this.classList.contains('active')) {
+            enableVoiceReader();
+        } else {
+            disableVoiceReader();
+        }
+    });
+}
+
+if (toggleVoiceBtn) {
+    toggleVoiceBtn.addEventListener('click', function() {
+        const voiceBtnMain = document.getElementById('voiceBtn');
+        if (voiceBtnMain) {
+            voiceBtnMain.click();
+        }
+    });
+}
+
+// ========================================
+// FUNCIONALIDAD FUENTE GRANDE
+// ========================================
+
+let currentFontSize = 1; // 1 = normal, 1.25 = grande
+
+// Botón de aumentar fuente en header
+const fontSizeBtn = document.getElementById('fontSizeBtn');
+if (fontSizeBtn) {
+    fontSizeBtn.addEventListener('click', function() {
+        this.classList.toggle('active');
+        if (this.classList.contains('active')) {
+            document.body.classList.add('large-font');
+            currentFontSize = 1.25;
+            showNotification(translations[currentLanguage]?.msg_font_increased || 'Tamaño de fuente aumentado');
+        } else {
+            document.body.classList.remove('large-font');
+            currentFontSize = 1;
+            showNotification(translations[currentLanguage]?.msg_font_reset || 'Tamaño de fuente restablecido');
+        }
+        // Guardar preferencia
+        localStorage.setItem('largeFontEnabled', this.classList.contains('active'));
+    });
+}
+
+// Botones del panel de accesibilidad
+const increaseFontBtn = document.getElementById('increaseFontBtn');
+const decreaseFontBtn = document.getElementById('decreaseFontBtn');
+const resetFontBtn = document.getElementById('resetFontBtn');
+
+if (increaseFontBtn) {
+    increaseFontBtn.addEventListener('click', function() {
+        document.body.classList.add('large-font');
+        currentFontSize = 1.25;
+        if (fontSizeBtn) fontSizeBtn.classList.add('active');
+        showNotification(translations[currentLanguage]?.msg_font_increased || 'Tamaño de fuente aumentado');
+        localStorage.setItem('largeFontEnabled', 'true');
+    });
+}
+
+if (decreaseFontBtn) {
+    decreaseFontBtn.addEventListener('click', function() {
+        document.body.classList.remove('large-font');
+        currentFontSize = 1;
+        if (fontSizeBtn) fontSizeBtn.classList.remove('active');
+        showNotification(translations[currentLanguage]?.msg_font_decreased || 'Tamaño de fuente reducido');
+        localStorage.setItem('largeFontEnabled', 'false');
+    });
+}
+
+if (resetFontBtn) {
+    resetFontBtn.addEventListener('click', function() {
+        document.body.classList.remove('large-font');
+        currentFontSize = 1;
+        if (fontSizeBtn) fontSizeBtn.classList.remove('active');
+        showNotification(translations[currentLanguage]?.msg_font_reset || 'Tamaño de fuente restablecido');
+        localStorage.setItem('largeFontEnabled', 'false');
+    });
+}
+
+// Botón de alto contraste
+const contrastBtn = document.getElementById('contrastBtn');
+const toggleContrastBtn = document.getElementById('toggleContrastBtn');
+
+if (contrastBtn) {
+    contrastBtn.addEventListener('click', function() {
+        this.classList.toggle('active');
+        document.body.classList.toggle('high-contrast');
+        const isActive = this.classList.contains('active');
+        showNotification(
+            isActive 
+                ? (translations[currentLanguage]?.msg_contrast_activated || 'Alto contraste activado')
+                : (translations[currentLanguage]?.msg_contrast_deactivated || 'Alto contraste desactivado')
+        );
+        localStorage.setItem('highContrastEnabled', isActive);
+    });
+}
+
+if (toggleContrastBtn) {
+    toggleContrastBtn.addEventListener('click', function() {
+        if (contrastBtn) {
+            contrastBtn.click();
+        }
+    });
+}
+
+// Restaurar preferencias guardadas al cargar la página
+function restoreAccessibilityPreferences() {
+    // Restaurar fuente grande
+    const largeFontEnabled = localStorage.getItem('largeFontEnabled') === 'true';
+    if (largeFontEnabled) {
+        document.body.classList.add('large-font');
+        if (fontSizeBtn) fontSizeBtn.classList.add('active');
+        currentFontSize = 1.25;
+    }
+    
+    // Restaurar alto contraste
+    const highContrastEnabled = localStorage.getItem('highContrastEnabled') === 'true';
+    if (highContrastEnabled) {
+        document.body.classList.add('high-contrast');
+        if (contrastBtn) contrastBtn.classList.add('active');
+    }
+    
+    // Restaurar lector de voz
+    const voiceReaderEnabled = localStorage.getItem('voiceReaderEnabled') === 'true';
+    if (voiceReaderEnabled && voiceBtn) {
+        voiceBtn.classList.add('active');
+        enableVoiceReader();
+    }
+}
+
+// Llamar a la función al cargar la página
+restoreAccessibilityPreferences();
+
+// Sistema de notificaciones toast
+function showNotification(message) {
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toastMessage');
+    
+    if (toast && toastMessage) {
+        toastMessage.textContent = message;
+        toast.classList.add('active');
+        
+        setTimeout(() => {
+            toast.classList.remove('active');
+        }, 3000);
+    }
+}
