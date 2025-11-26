@@ -60,6 +60,30 @@ const translations = {
         historical_capital_inca: "Capital histórica del Imperio Inca",
         beaches_deserts: "Playas, desiertos y civilizaciones antiguas",
         mountains_traditions: "Montañas, tradiciones y cultura ancestral",
+        museum: "Museo",
+        heritage: "Patrimonio",
+        fully_accessible: "Totalmente accesible",
+        every_day: "Todos los días",
+        partial: "Parcial",
+        open_24h: "Abierto 24h",
+        world_heritage: "Patrimonio Mundial UNESCO",
+        guided_tours: "Tours guiados",
+        archaeological: "Arqueológico",
+        art: "Arte",
+        attraction: "Atracción",
+        fortress: "Fortaleza",
+        unesco_heritage: "Patrimonio UNESCO",
+        festivity: "Festividad",
+        adapted_paths: "Senderos adaptados",
+        night_visits: "Visitas nocturnas",
+        free_entry_sun: "Entrada libre dom",
+        paved_paths: "Senderos pavimentados",
+        night_show: "Show nocturno",
+        world_wonder: "Maravilla del Mundo",
+        early_booking: "Reserva anticipada",
+        limited_entry: "Entrada limitada",
+        steep_paths: "Caminos empinados",
+        inti_raymi: "Inti Raymi 24-Jun",
         
         // Activities
         historic_center_tour: "Recorrido por el Centro Histórico",
@@ -186,6 +210,30 @@ const translations = {
         historical_capital_inca: "Historical capital of the Inca Empire",
         beaches_deserts: "Beaches, deserts and ancient civilizations",
         mountains_traditions: "Mountains, traditions and ancestral culture",
+        museum: "Museum",
+        heritage: "Heritage",
+        fully_accessible: "Fully accessible",
+        every_day: "Every day",
+        partial: "Partial",
+        open_24h: "Open 24h",
+        world_heritage: "UNESCO World Heritage",
+        guided_tours: "Guided tours",
+        archaeological: "Archaeological",
+        art: "Art",
+        attraction: "Attraction",
+        fortress: "Fortress",
+        unesco_heritage: "UNESCO Heritage",
+        festivity: "Festivity",
+        adapted_paths: "Adapted paths",
+        night_visits: "Night visits",
+        free_entry_sun: "Free entry Sun",
+        paved_paths: "Paved paths",
+        night_show: "Night show",
+        world_wonder: "World Wonder",
+        early_booking: "Early booking required",
+        limited_entry: "Limited entry",
+        steep_paths: "Steep paths",
+        inti_raymi: "Inti Raymi Jun-24",
         
         // Activities
         historic_center_tour: "Historic Center Tour",
@@ -312,6 +360,30 @@ const translations = {
         historical_capital_inca: "Inca kawsaypa uma llaqtan",
         beaches_deserts: "Playakuna, ch'in pachakuna, ñawpa kawsaykuna",
         mountains_traditions: "Urqukuna, kawsaykuna, yachaymasiykuna",
+        museum: "Museo",
+        heritage: "Qhapaqñan",
+        fully_accessible: "Tukuy Yanapay",
+        every_day: "Sapa p'unchay",
+        partial: "Chikan",
+        open_24h: "24 horakuna kichasqa",
+        world_heritage: "Pacha Qhapaqñan UNESCO",
+        guided_tours: "Pusaq puriy",
+        archaeological: "Ñawpa ruwanakuna",
+        art: "Arte",
+        attraction: "Rikuna",
+        fortress: "Pukara",
+        unesco_heritage: "UNESCO Qhapaqñan",
+        festivity: "Raymi",
+        adapted_paths: "Allichasqa ñankuna",
+        night_visits: "Tuta watuy",
+        free_entry_sun: "Mana qullqi intichaw",
+        paved_paths: "Rumi ñankuna",
+        night_show: "Tuta rikuchiy",
+        world_wonder: "Pacha Admirakuy",
+        early_booking: "Ñawpaqta reservay",
+        limited_entry: "Pisi yaykuy",
+        steep_paths: "Siq'i ñankuna",
+        inti_raymi: "Inti Raymi 24-Jun",
         
         // Activities
         historic_center_tour: "Ñawpa Centro Puriy",
@@ -1040,13 +1112,23 @@ document.addEventListener('DOMContentLoaded', function() {
             contrastCheckbox.checked = true;
             document.body.classList.add('high-contrast');
         }
+        // Sincronizar con el botón del header
+        const contrastBtn = document.getElementById('contrastBtn');
+        if (contrastBtn) {
+            contrastBtn.classList.add('active');
+        }
     }
     
     if (savedLargeFont) {
         const fontCheckbox = document.getElementById('large-font');
         if (fontCheckbox) {
             fontCheckbox.checked = true;
-            document.documentElement.style.fontSize = '18px';
+            document.body.classList.add('large-font');
+        }
+        // Sincronizar con el botón del header
+        const fontSizeBtn = document.getElementById('fontSizeBtn');
+        if (fontSizeBtn) {
+            fontSizeBtn.classList.add('active');
         }
     }
 });    // Update HTML lang attribute
@@ -1169,11 +1251,22 @@ if (highContrastCheckbox) {
         if (this.checked) {
             document.body.classList.add('high-contrast');
             console.log('High contrast enabled');
+            // Sincronizar con el botón del header
+            const contrastBtn = document.getElementById('contrastBtn');
+            if (contrastBtn) {
+                contrastBtn.classList.add('active');
+            }
         } else {
             document.body.classList.remove('high-contrast');
             console.log('High contrast disabled');
+            // Sincronizar con el botón del header
+            const contrastBtn = document.getElementById('contrastBtn');
+            if (contrastBtn) {
+                contrastBtn.classList.remove('active');
+            }
         }
         localStorage.setItem('high-contrast', this.checked);
+        localStorage.setItem('highContrastEnabled', this.checked);
     });
 }
 
@@ -1202,13 +1295,24 @@ if (voiceReaderCheckbox) {
 if (largeFontCheckbox) {
     largeFontCheckbox.addEventListener('change', function() {
         if (this.checked) {
-            document.documentElement.style.fontSize = '18px';
+            document.body.classList.add('large-font');
             console.log('Large font enabled');
+            // Sincronizar con el botón del header
+            const fontSizeBtn = document.getElementById('fontSizeBtn');
+            if (fontSizeBtn) {
+                fontSizeBtn.classList.add('active');
+            }
         } else {
-            document.documentElement.style.fontSize = '16px';
+            document.body.classList.remove('large-font');
             console.log('Large font disabled');
+            // Sincronizar con el botón del header
+            const fontSizeBtn = document.getElementById('fontSizeBtn');
+            if (fontSizeBtn) {
+                fontSizeBtn.classList.remove('active');
+            }
         }
         localStorage.setItem('large-font', this.checked);
+        localStorage.setItem('largeFontEnabled', this.checked);
     });
 }
 
@@ -3047,7 +3151,9 @@ const fontSizeBtn = document.getElementById('fontSizeBtn');
 if (fontSizeBtn) {
     fontSizeBtn.addEventListener('click', function() {
         this.classList.toggle('active');
-        if (this.classList.contains('active')) {
+        const isActive = this.classList.contains('active');
+        
+        if (isActive) {
             document.body.classList.add('large-font');
             currentFontSize = 1.25;
             showNotification(translations[currentLanguage]?.msg_font_increased || 'Tamaño de fuente aumentado');
@@ -3056,8 +3162,16 @@ if (fontSizeBtn) {
             currentFontSize = 1;
             showNotification(translations[currentLanguage]?.msg_font_reset || 'Tamaño de fuente restablecido');
         }
+        
+        // Sincronizar con el checkbox del login
+        const largeFontCheckbox = document.getElementById('large-font');
+        if (largeFontCheckbox) {
+            largeFontCheckbox.checked = isActive;
+        }
+        
         // Guardar preferencia
-        localStorage.setItem('largeFontEnabled', this.classList.contains('active'));
+        localStorage.setItem('largeFontEnabled', isActive);
+        localStorage.setItem('large-font', isActive);
     });
 }
 
@@ -3105,12 +3219,20 @@ if (contrastBtn) {
         this.classList.toggle('active');
         document.body.classList.toggle('high-contrast');
         const isActive = this.classList.contains('active');
+        
+        // Sincronizar con el checkbox del login
+        const highContrastCheckbox = document.getElementById('high-contrast');
+        if (highContrastCheckbox) {
+            highContrastCheckbox.checked = isActive;
+        }
+        
         showNotification(
             isActive 
                 ? (translations[currentLanguage]?.msg_contrast_activated || 'Alto contraste activado')
                 : (translations[currentLanguage]?.msg_contrast_deactivated || 'Alto contraste desactivado')
         );
         localStorage.setItem('highContrastEnabled', isActive);
+        localStorage.setItem('high-contrast', isActive);
     });
 }
 
@@ -3125,10 +3247,12 @@ if (toggleContrastBtn) {
 // Restaurar preferencias guardadas al cargar la página
 function restoreAccessibilityPreferences() {
     // Restaurar fuente grande
-    const largeFontEnabled = localStorage.getItem('largeFontEnabled') === 'true';
+    const largeFontEnabled = localStorage.getItem('largeFontEnabled') === 'true' || localStorage.getItem('large-font') === 'true';
     if (largeFontEnabled) {
         document.body.classList.add('large-font');
         if (fontSizeBtn) fontSizeBtn.classList.add('active');
+        const largeFontCheckbox = document.getElementById('large-font');
+        if (largeFontCheckbox) largeFontCheckbox.checked = true;
         currentFontSize = 1.25;
     }
     
